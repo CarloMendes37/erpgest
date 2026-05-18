@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── CSS Variables Sneat ──────────────────────────────────── */
+:root {
+  --sneat-primary:   #696cff;
+  --sneat-secondary: #9155fd;
+  --grad-brand: linear-gradient(135deg, #696cff 0%, #9155fd 100%);
+  --navbar-height: 64px;
+  --menu-height: 52px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #f5f5f9; }
+a { text-decoration: none; }
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1e1; border-radius: 3px; }
+
+/* ── Sneat Gradient ───────────────────────────────────────── */
+.bg-grad-brand { background: var(--grad-brand); }
+.text-grad-brand {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Navbar ───────────────────────────────────────────────── */
+.sneat-navbar {
+  background: var(--grad-brand);
+  height: var(--navbar-height);
+  box-shadow: 0 4px 18px rgba(105,108,255,.22);
+}
+
+/* ── Horizontal Menu ──────────────────────────────────────── */
+.sneat-menu {
+  background: #2b2c40;
+  height: var(--menu-height);
+  position: relative;
+  z-index: 100;
+}
+.menu-item { position: relative; }
+.menu-item:hover > .menu-sub,
+.menu-item.open > .menu-sub {
+  display: block;
+  animation: fadeDown .15s ease-out;
+}
+.menu-sub {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  z-index: 200;
+}
+.menu-sub a {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  color: #444;
+  font-size: 14px;
+  transition: background .15s;
+}
+.menu-sub a:hover { background: #f0f0ff; color: var(--sneat-primary); }
+.menu-sub a.active { color: var(--sneat-primary); font-weight: 600; }
+
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Cards KPI ────────────────────────────────────────────── */
+.kpi-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(105,108,255,.1);
+  transition: box-shadow .2s, transform .2s;
+}
+.kpi-card:hover { box-shadow: 0 6px 18px rgba(105,108,255,.18); transform: translateY(-2px); }
+
+/* ── Table ────────────────────────────────────────────────── */
+.data-table th { background: #f8f8ff; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+.data-table tr:hover td { background: #fafaff; }
+
+/* ── Badge status ─────────────────────────────────────────── */
+.badge { display:inline-flex; align-items:center; padding: 3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+.badge-rascunho   { background:#e8e8ff; color:#696cff; }
+.badge-emitida    { background:#e0f2ff; color:#0e90d2; }
+.badge-paga       { background:#e6f9e6; color:#28a745; }
+.badge-parcial    { background:#fff3cd; color:#856404; }
+.badge-anulada    { background:#fde8e8; color:#dc3545; }
+.badge-vencida    { background:#fff0e0; color:#fd7e14; }
+
+/* ── Btn Grad ─────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--grad-brand);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s, box-shadow .2s;
+  box-shadow: 0 2px 8px rgba(105,108,255,.4);
+}
+.btn-primary:hover { opacity:.9; box-shadow: 0 4px 14px rgba(105,108,255,.5); }
+.btn-ghost { background:transparent; border:1.5px solid #696cff; color:#696cff; border-radius:8px; padding:8px 20px; font-weight:600; cursor:pointer; transition:.2s; }
+.btn-ghost:hover { background:#696cff; color:#fff; }
+
+/* ── Form inputs ──────────────────────────────────────────── */
+.form-input {
+  width:100%; border:1.5px solid #e0e0e0; border-radius:8px;
+  padding:10px 14px; font-size:14px; outline:none; transition:.2s;
+  background:#fff;
+}
+.form-input:focus { border-color:var(--sneat-primary); box-shadow:0 0 0 3px rgba(105,108,255,.15); }
+.form-label { font-size:13px; font-weight:600; color:#555; margin-bottom:4px; display:block; }
+
+/* ── Modal ────────────────────────────────────────────────── */
+.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000; display:flex; align-items:center; justify-content:center; }
+.modal-box { background:#fff; border-radius:14px; padding:28px; width:90%; max-width:560px; box-shadow:0 20px 60px rgba(0,0,0,.2); max-height:90vh; overflow-y:auto; }
+
+/* ── Chart container ──────────────────────────────────────── */
+.chart-wrap { position:relative; height:280px; }
+
+/* ── Sidebar collapsed mobile ─────────────────────────────── */
+@media(max-width:768px){
+  .sneat-menu .menu-inner { overflow-x:auto; }
+  .menu-sub { position:fixed; top:auto; left:0; right:0; min-width:100%; border-radius:0; }
+}
