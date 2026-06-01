@@ -78,7 +78,7 @@ export class DashboardService {
       this.getRecebimentosMes(tenantId, anoAtual, mesAtual),
       this.getSaldoPendente(tenantId, hojeStr),
       this.clienteRepo.count({ where: { tenantId } }),
-      this.clienteRepo.count({ where: { tenantId, ativo: true } }),
+      this.clienteRepo.count({ where: { tenantId } }),
       this.artigoRepo.count({ where: { tenantId } }),
       this.getArtigosAlerta(tenantId),
       this.getDocsInfo(tenantId, anoAtual, mesAtual),

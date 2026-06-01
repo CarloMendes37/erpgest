@@ -1,8 +1,9 @@
 import {
   Controller, Get, Post, Put, Patch, Body,
-  Param, ParseIntPipe, Query, UseGuards,
+  Param, ParseIntPipe, Query, UseGuards, Req,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Request } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -56,5 +57,28 @@ export class UsersController {
   @Roles('ROLE_ADMIN')
   toggle(@Param('id', ParseIntPipe) id: number, @Tenant() tenantId: number) {
     return this.svc.toggleActive(id, tenantId);
+  }
+
+  /** ── Endpoints de Perfil do próprio utilizador ── */
+  @Put('profile')
+  @ApiOperation({ summary: 'Actualizar perfil do utilizador autenticado' })
+  updateProfile(
+    @Req() req: Request,
+    @Tenant() tenantId: number,
+    @Body() body: { name?: string; photoUrl?: string },
+  ) {
+    const userId = (req.user as any).sub ?? (req.user as any).id;
+    return this.svc.updateProfile(userId, tenantId, body);
+  }
+
+  @Post('profile/change-password')
+  @ApiOperation({ summary: 'Alterar password do utilizador autenticado' })
+  changePassword(
+    @Req() req: Request,
+    @Tenant() tenantId: number,
+    @Body() body: { currentPassword: string; newPassword: string },
+  ) {
+    const userId = (req.user as any).sub ?? (req.user as any).id;
+    return this.svc.changePassword(userId, tenantId, body.currentPassword, body.newPassword);
   }
 }

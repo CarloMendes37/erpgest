@@ -76,7 +76,7 @@ export class DashboardComercialService {
       this.getFaturacaoMes(tenantId, anoAtual, mesAtual),
       this.getFaturacaoMes(tenantId, anoAnterior, mesAnterior),
       this.getPendentesResumo(tenantId),
-      this.clienteRepo.count({ where: { tenantId, ativo: true } }),
+      this.clienteRepo.count({ where: { tenantId } }),
       this.getNovosClientesMes(tenantId, anoAtual, mesAtual),
       this.artigoRepo.count({ where: { tenantId, ativo: true } }),
       this.getArtigosStockBaixo(tenantId),

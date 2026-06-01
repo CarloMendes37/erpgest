@@ -77,7 +77,7 @@ export class FaturasService {
       status: data.status || 1,
     });
 
-    const saved = await this.repo.save(fatura);
+    const saved = await this.repo.save(fatura) as unknown as Fatura;
     if (linhasProcessadas.length > 0) {
       const linhasEntidades = linhasProcessadas.map(l =>
         this.linhaRepo.create({ ...l, faturaId: saved.id })
