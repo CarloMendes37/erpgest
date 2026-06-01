@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Eye, XCircle, CreditCard, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Search, Eye, XCircle, CreditCard, Filter, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { faturasApi } from '@/api/faturas';
 import Table from '@/components/ui/Table';
@@ -10,6 +11,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { FATURA_STATUS_LABEL, FATURA_STATUS_CLASS, FATURA_TIPO_LABEL } from '@/types';
 import type { Fatura } from '@/types';
 import NovaFatura from './NovaFatura';
+import FichaLiquidacao from './FichaLiquidacao';
 
 const STATUS_OPTS = [
   { value: '', label: 'Todos os estados' },
@@ -22,13 +24,14 @@ const STATUS_OPTS = [
 ];
 
 export default function FaturasPage() {
-  const qc = useQueryClient();
+  const qc       = useQueryClient();
+  const navigate = useNavigate();
   const [page, setPage]          = useState(1);
   const [search, setSearch]      = useState('');
   const [status, setStatus]      = useState('');
   const [showNova, setShowNova]  = useState(false);
   const [detail, setDetail]      = useState<Fatura | null>(null);
-  const [liquidar, setLiquidar]  = useState<{ fatura: Fatura; valor: string } | null>(null);
+  const [liquidarFatura, setLiquidarFatura] = useState<Fatura | null>(null);
   const debSearch = useDebounce(search);
 
   const { data, isLoading } = useQuery({
@@ -51,16 +54,7 @@ export default function FaturasPage() {
     onError:    () => toast.error('Erro ao anular'),
   });
 
-  const liquidarMut = useMutation({
-    mutationFn: ({ id, valor }: { id: number; valor: number }) => faturasApi.liquidar(id, valor),
-    onSuccess:  () => {
-      qc.invalidateQueries({ queryKey: ['faturas'] });
-      qc.invalidateQueries({ queryKey: ['faturas-kpis'] });
-      setLiquidar(null);
-      toast.success('Pagamento registado');
-    },
-    onError: () => toast.error('Erro ao registar pagamento'),
-  });
+  // liquidarMut moved to FichaLiquidacao component
 
   const columns = [
     {
@@ -106,13 +100,19 @@ export default function FaturasPage() {
         <div className="flex gap-1 justify-end">
           <button
             onClick={(e) => { e.stopPropagation(); setDetail(r); }}
-            title="Ver detalhe"
+            title="Ver detalhe rápido"
             className="w-8 h-8 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-indigo-500">
             <Eye size={14} />
           </button>
+          <button
+              onClick={(e) => { e.stopPropagation(); navigate(`/faturas/${r.id}`); }}
+              title="Abrir página de detalhe"
+              className="w-8 h-8 rounded-lg hover:bg-purple-50 flex items-center justify-center text-purple-400">
+              <ExternalLink size={14} />
+            </button>
           {[1, 3].includes(r.status) && (
             <button
-              onClick={(e) => { e.stopPropagation(); setLiquidar({ fatura: r, valor: String(r.saldo) }); }}
+              onClick={(e) => { e.stopPropagation(); setLiquidarFatura(r); }}
               title="Registar pagamento"
               className="w-8 h-8 rounded-lg hover:bg-green-50 flex items-center justify-center text-green-500">
               <CreditCard size={14} />
@@ -237,44 +237,13 @@ export default function FaturasPage() {
         )}
       </Modal>
 
-      {/* Modal liquidar */}
-      <Modal
-        open={!!liquidar}
-        onClose={() => setLiquidar(null)}
-        title="Registar Pagamento"
-        size="sm"
-        footer={
-          <>
-            <button onClick={() => setLiquidar(null)} className="btn-ghost">Cancelar</button>
-            <button
-              onClick={() => liquidar && liquidarMut.mutate({ id: liquidar.fatura.id, valor: Number(liquidar.valor) })}
-              className="btn-primary"
-            >
-              Confirmar Pagamento
-            </button>
-          </>
-        }
-      >
-        {liquidar && (
-          <div className="space-y-4">
-            <div className="bg-indigo-50 rounded-lg p-3">
-              <p className="text-sm text-gray-600">Fatura <strong>{liquidar.fatura.numero}</strong></p>
-              <p className="text-sm text-gray-600">Saldo em dívida: <strong className="text-red-500">{fmt.currency(liquidar.fatura.saldo)}</strong></p>
-            </div>
-            <div>
-              <label className="form-label">Valor a pagar (€)</label>
-              <input
-                type="number"
-                step="0.01"
-                value={liquidar.valor}
-                onChange={(e) => setLiquidar({ ...liquidar, valor: e.target.value })}
-                className="form-input"
-                max={liquidar.fatura.saldo}
-              />
-            </div>
-          </div>
-        )}
-      </Modal>
+      {/* FichaLiquidacao wizard */}
+      {liquidarFatura && (
+        <FichaLiquidacao
+          fatura={liquidarFatura}
+          onClose={() => setLiquidarFatura(null)}
+        />
+      )}
     </div>
   );
 }

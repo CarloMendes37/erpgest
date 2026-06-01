@@ -240,6 +240,22 @@ export interface DashboardAlerta {
   link?:     string;
 }
 
+// ─── License ─────────────────────────────────────────────────
+export interface License {
+  id: number;
+  tenantId: number;
+  licenseKey: string;
+  anoFiscal: number;
+  tipo: string;         // ANUAL | MENSAL | TRIAL
+  modulos: string | null;
+  maxUsers: number;
+  maxFaturas: number;
+  ativa: boolean;
+  validaAte: string | null;
+  observacoes: string | null;
+  createdAt: string;
+}
+
 // ─── API Envelope ─────────────────────────────────────────────
 export interface ApiResponse<T = unknown> {
   success: boolean;
